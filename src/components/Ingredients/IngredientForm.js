@@ -10,17 +10,19 @@ const IngredientForm = React.memo(props => {
   });
 
   const onChangeTitle = event => {
-    setState({
+    const value = event.target.value;
+    setState(state => ({
       ...state,
-      title: event.target.value
-    });
+      title: value
+    }));
   };
 
   const onChangeAmount = event => {
-    setState({
+    const value = event.target.value;
+    setState(state => ({
       ...state,
-      amount: event.target.value
-    });
+      amount: value
+    }));
   };
 
   const submitHandler = event => {
