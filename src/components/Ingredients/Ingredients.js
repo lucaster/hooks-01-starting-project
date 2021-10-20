@@ -73,7 +73,6 @@ function Ingredients() {
 
   const clearError = () => {
     setError(null);
-    setLoading(false);
   }
 
   return (
