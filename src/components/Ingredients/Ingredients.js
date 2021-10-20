@@ -10,39 +10,7 @@ function Ingredients() {
 
   const [ingredients, setIngredients] = useState([]);
 
-  // React will invoke this after every render cycle of this component:
-  useEffect(
-    // the function:
-    () => {
-      console.debug('Ingredients', 'useEffect', 'fetch');
-      fetch(FIREBASE_DB_INGREDIENTS_URL)
-        .then(response => response.json())
-        .then(responseJson => {
-          const loadedIngredients = Object.keys(responseJson)
-            .map(key => {
-              const obj = responseJson[key];
-              return {
-                id: key,
-                title: obj.title,
-                amount: obj.amount
-              };
-            });
-          return loadedIngredients;
-        })
-        .then(ingredients => {
-          console.log('Ingridients', 'useEffect', 'before setIngredients', ingredients);
-          setIngredients(ingredients);
-          console.log('Ingridients', 'useEffect', 'after setIngredients', ingredients);
-        });
-    },
-    // parameters to the function:
-    // (the function will be re-invoked only if the parameters have changed)
-    // (btw, [] => useEffect() acts like componentDidMount()
-    //  of class components, that is only  after the first render)
-    []
-  );
-
-  // rereun when ingregients change:
+  // reruns when ingregients change:
   useEffect(
     () => {
       console.log('Ingridients', 'useEffect', 'Rendering Ingredients', ingredients);
