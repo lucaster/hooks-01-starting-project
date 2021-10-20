@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { FIREBASE_DB_URL } from '../../config/secrets';
 import IngredientForm from './IngredientForm';
 import IngredientList from './IngredientList';
@@ -7,7 +7,35 @@ import Search from './Search';
 const FIREBASE_DB_INGREDIENTS_URL = `${FIREBASE_DB_URL}/ingredients.json`;
 
 function Ingredients() {
+
   const [ingredients, setIngredients] = useState([]);
+
+  // React will invoke this after every render cycle of this component:
+  useEffect(
+    // the function:
+    () => {
+      fetch(FIREBASE_DB_INGREDIENTS_URL)
+        .then(response => response.json())
+        .then(responseJson => {
+          const loadedIngredients = Object.keys(responseJson)
+            .map(key => {
+              const obj = responseJson[key];
+              return {
+                id: key,
+                title: obj.title,
+                amount: obj.amount
+              };
+            });
+          return loadedIngredients;
+        })
+        .then(setIngredients);
+    },
+    // parameters to the function:
+    // (the function will be re-invoked only if the parameters have changed)
+    // (btw, [] => useEffect() acts like componentDidMount()
+    //  of class components, that is only  after the first render)
+    []
+  );
 
   const addIngredientHandler = (ingredient) => {
     fetch(FIREBASE_DB_INGREDIENTS_URL, {
