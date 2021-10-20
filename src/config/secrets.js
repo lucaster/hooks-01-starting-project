@@ -1,0 +1,1 @@
+export const FIREBASE_DB_URL = 'https://???.firebaseio.com';
