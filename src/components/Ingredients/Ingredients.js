@@ -28,13 +28,24 @@ function Ingredients() {
             });
           return loadedIngredients;
         })
-        .then(setIngredients);
+        .then(ingredients => {
+          console.log('Ingridients', 'useEffect', 'before setIngredients', ingredients);
+          setIngredients(ingredients);
+          console.log('Ingridients', 'useEffect', 'after setIngredients', ingredients);
+        });
     },
     // parameters to the function:
     // (the function will be re-invoked only if the parameters have changed)
     // (btw, [] => useEffect() acts like componentDidMount()
     //  of class components, that is only  after the first render)
     []
+  );
+
+  useEffect(
+    () => {
+      console.log('Ingridients', 'useEffect', 'Rendering Ingredients', ingredients);
+    },
+    [ingredients]
   );
 
   const addIngredientHandler = (ingredient) => {
