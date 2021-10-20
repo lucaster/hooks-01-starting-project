@@ -1,1 +1,1 @@
-export const FIREBASE_DB_URL = 'https://???.firebaseio.com';
+export const FIREBASE_DB_URL = 'https://react-hooks-update-lucaster-default-rtdb.firebaseio.com';

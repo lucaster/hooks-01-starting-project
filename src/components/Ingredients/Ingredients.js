@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { FIREBASE_DB_URL } from '../../config/secrets';
 import IngredientForm from './IngredientForm';
 import IngredientList from './IngredientList';
@@ -14,6 +14,7 @@ function Ingredients() {
   useEffect(
     // the function:
     () => {
+      console.debug('Ingredients', 'useEffect', 'fetch');
       fetch(FIREBASE_DB_INGREDIENTS_URL)
         .then(response => response.json())
         .then(responseJson => {
@@ -41,6 +42,7 @@ function Ingredients() {
     []
   );
 
+  // rereun when ingregients change:
   useEffect(
     () => {
       console.log('Ingridients', 'useEffect', 'Rendering Ingredients', ingredients);
@@ -73,6 +75,10 @@ function Ingredients() {
     setIngredients(curr => curr.filter(ing => ing.id !== id));
   };
 
+  const ingredientsLoadedHandler = useCallback(ingredients => {
+    setIngredients(ingredients);
+  }, [setIngredients]);
+
   return (
     <div className="App">
       <IngredientForm
@@ -80,7 +86,9 @@ function Ingredients() {
       />
 
       <section>
-        <Search />
+        <Search
+          onIngredientsLoaded={ingredientsLoadedHandler}
+        />
         <IngredientList
           ingredients={ingredients}
           onRemoveItem={removeIngredientHandler}
