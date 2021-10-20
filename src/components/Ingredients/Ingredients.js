@@ -40,7 +40,12 @@ function Ingredients() {
   };
 
   const removeIngredientHandler = id => {
-    setIngredients(curr => curr.filter(ing => ing.id !== id));
+    fetch(`${FIREBASE_DB_URL}/ingredients/${id}.json`, {
+      method: 'DELETE'
+    })
+      .then(() => {
+        setIngredients(curr => curr.filter(ing => ing.id !== id));
+      });
   };
 
   const ingredientsLoadedHandler = useCallback(ingredients => {
