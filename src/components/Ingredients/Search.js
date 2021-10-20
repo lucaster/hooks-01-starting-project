@@ -15,7 +15,7 @@ const Search = React.memo(props => {
   // rerun when filter changes:
   useEffect(() => {
     console.debug('Search', 'useEffect', 'fetch');
-    setTimeout(() => {
+    const timer = setTimeout(() => {
       if (filter === inputFilterRef.current.value) {
         // hasn't changed in the last 500ms
         const query = filter ? `?orderBy="title"&equalTo="${filter}"` : '';
@@ -41,6 +41,11 @@ const Search = React.memo(props => {
           });
       }
     }, FILTER_THROTTLE_MS);
+    // will run before the next re-run:
+    const destructor = () => {
+      clearTimeout(timer);
+    };
+    return destructor;
   }, [filter, onIngredientsLoaded, inputFilterRef]);
 
   const onChangeFilter = event => {
