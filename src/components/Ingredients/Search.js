@@ -19,7 +19,7 @@ const Search = React.memo(props => {
       if (filter === inputFilterRef.current.value) {
         // hasn't changed in the last 500ms
         const query = filter ? `?orderBy="title"&equalTo="${filter}"` : '';
-          fetch(FIREBASE_DB_INGREDIENTS_URL + query)
+        fetch(FIREBASE_DB_INGREDIENTS_URL + query)
           .then(response => response.json())
           .then(responseJson => {
             const loadedIngredients = Object.keys(responseJson)
