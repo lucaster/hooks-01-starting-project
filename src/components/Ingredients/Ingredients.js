@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { FIREBASE_DB_URL } from '../../config/secrets';
+import ErrorModal from '../UI/ErrorModal';
 import IngredientForm from './IngredientForm';
 import IngredientList from './IngredientList';
 import Search from './Search';
@@ -9,6 +10,8 @@ const FIREBASE_DB_INGREDIENTS_URL = `${FIREBASE_DB_URL}/ingredients.json`;
 function Ingredients() {
 
   const [ingredients, setIngredients] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
 
   // reruns when ingregients change:
   useEffect(
@@ -18,7 +21,15 @@ function Ingredients() {
     [ingredients]
   );
 
+  const errorHandler = err => {
+    console.error(err);
+    setError(err.message);
+    setLoading(false);
+    return Promise.reject(err);
+  };
+
   const addIngredientHandler = (ingredient) => {
+    setLoading(true);
     fetch(FIREBASE_DB_INGREDIENTS_URL, {
       method: 'POST',
       body: JSON.stringify(ingredient),
@@ -26,6 +37,10 @@ function Ingredients() {
         'Content-Type': 'application/json'
       }
     })
+      .then(response => {
+        setLoading(false);
+        return response;
+      })
       .then(response => response.json())
       .then(responseJson => {
         // console.debug('Ingredients', 'addIngredientHandler', 'responseJson', responseJson);
@@ -36,26 +51,41 @@ function Ingredients() {
             ...ingredient
           }
         ]);
-      });
+      })
+      .catch(errorHandler);
   };
 
   const removeIngredientHandler = id => {
-    fetch(`${FIREBASE_DB_URL}/ingredients/${id}.json`, {
+    setLoading(true);
+    fetch(`${FIREBASE_DB_URL}/ingredients/${id}.jsonz`, {
       method: 'DELETE'
     })
       .then(() => {
+        setLoading(false);
         setIngredients(curr => curr.filter(ing => ing.id !== id));
-      });
+      })
+      .catch(errorHandler);
   };
 
   const ingredientsLoadedHandler = useCallback(ingredients => {
     setIngredients(ingredients);
   }, [setIngredients]);
 
+  const clearError = () => {
+    setError(null);
+    setLoading(false);
+  }
+
   return (
     <div className="App">
+
+      {error && <ErrorModal
+        onClose={clearError}
+      >{error}</ErrorModal>}
+
       <IngredientForm
         onAddIngredient={addIngredientHandler}
+        loading={loading}
       />
 
       <section>
