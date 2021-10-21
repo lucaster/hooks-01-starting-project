@@ -125,11 +125,11 @@ function Ingredients() {
     });
   }, []);
 
-  const clearError = () => {
+  const clearError = useCallback(() => {
     httpDispatch({
       type: 'CLEAR'
     });
-  }
+  }, []);
 
   const ingredientList = useMemo(() => {
     return (
