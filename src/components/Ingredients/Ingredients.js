@@ -58,14 +58,14 @@ function Ingredients() {
     console.log('Ingridients', 'useEffect', 'Rendering Ingredients', ingredients);
   }, [ingredients]);
 
-  const handleError = err => {
+  const handleError = useCallback(err => {
     console.error(err);
     httpDispatch({
       type: 'ERROR',
       errorMessage: err.message
     });
     return Promise.reject(err);
-  };
+  }, []);
 
   // useCallback() to prevent re-definition of same function in every rendering cycle:
   const handleAddIngredient = useCallback((ingredient) => {
@@ -97,7 +97,8 @@ function Ingredients() {
         });
       })
       .catch(handleError);
-  }, []);
+
+  }, [handleError]);
 
   const handleRemoveIngredient = useCallback(id => {
     httpDispatch({
@@ -116,7 +117,7 @@ function Ingredients() {
         });
       })
       .catch(handleError);
-  }, []);
+  }, [handleError]);
 
   const handleIngredientsLoaded = useCallback(ingredients => {
     ingredientsDispatch({
