@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useReducer } from 'react';
+import React, { useCallback, useEffect, useMemo, useReducer } from 'react';
 import { FIREBASE_DB_URL } from '../../config/secrets';
 import ErrorModal from '../UI/ErrorModal';
 import IngredientForm from './IngredientForm';
@@ -131,12 +131,26 @@ function Ingredients() {
     });
   }
 
+  const ingredientList = useMemo(() => {
+    return (
+      <IngredientList
+        ingredients={ingredients}
+        onRemoveItem={handleRemoveIngredient}
+      />
+    );
+  }, [ingredients, handleRemoveIngredient]);
+
   return (
     <div className="App">
 
-      {httpState.error && <ErrorModal
-        onClose={clearError}
-      >{httpState.error}</ErrorModal>}
+      {
+        httpState.error &&
+        <ErrorModal
+          onClose={clearError}
+        >
+          {httpState.error}
+        </ErrorModal>
+      }
 
       <IngredientForm
         onAddIngredient={handleAddIngredient}
@@ -147,10 +161,7 @@ function Ingredients() {
         <Search
           onIngredientsLoaded={handleIngredientsLoaded}
         />
-        <IngredientList
-          ingredients={ingredients}
-          onRemoveItem={handleRemoveIngredient}
-        />
+        {ingredientList}
       </section>
     </div>
   );
