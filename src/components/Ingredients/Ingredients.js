@@ -54,12 +54,9 @@ function Ingredients() {
   const [httpState, httpDispatch] = useReducer(httpReducer, { loading: false, error: null });
 
   // reruns when ingregients change:
-  useEffect(
-    () => {
-      console.log('Ingridients', 'useEffect', 'Rendering Ingredients', ingredients);
-    },
-    [ingredients]
-  );
+  useEffect(() => {
+    console.log('Ingridients', 'useEffect', 'Rendering Ingredients', ingredients);
+  }, [ingredients]);
 
   const handleError = err => {
     console.error(err);
@@ -70,7 +67,8 @@ function Ingredients() {
     return Promise.reject(err);
   };
 
-  const handleAddIngredient = (ingredient) => {
+  // useCallback() to prevent re-definition of same function in every rendering cycle:
+  const handleAddIngredient = useCallback((ingredient) => {
     httpDispatch({
       type: 'SEND'
     });
@@ -99,9 +97,9 @@ function Ingredients() {
         });
       })
       .catch(handleError);
-  };
+  }, []);
 
-  const handleRemoveIngredient = id => {
+  const handleRemoveIngredient = useCallback(id => {
     httpDispatch({
       type: 'SEND'
     });
@@ -118,7 +116,7 @@ function Ingredients() {
         });
       })
       .catch(handleError);
-  };
+  }, []);
 
   const handleIngredientsLoaded = useCallback(ingredients => {
     ingredientsDispatch({
