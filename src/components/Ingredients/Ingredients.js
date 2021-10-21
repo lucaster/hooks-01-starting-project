@@ -123,7 +123,7 @@ function Ingredients() {
       type: 'SET',
       ingredients: ingredients
     });
-  }, [ingredientsDispatch]);
+  }, []);
 
   const clearError = () => {
     httpDispatch({
