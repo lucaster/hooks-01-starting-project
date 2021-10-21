@@ -1,10 +1,15 @@
-import React from 'react';
-
-import Card from './UI/Card';
+import React, { useContext } from 'react';
+import { AuthContext } from '../context/auth-context';
 import './Auth.css';
+import Card from './UI/Card';
 
 const Auth = props => {
-  const loginHandler = () => {};
+
+  const authContext = useContext(AuthContext);
+
+  const loginHandler = () => {
+    authContext.login();
+  };
 
   return (
     <div className="auth">
