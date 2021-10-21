@@ -42,7 +42,8 @@ const httpReducer = (httpState, action) => {
 // spoiler: sono come le service factory di AngularJS
 
 // hook will rerun whenever the component that is using the hook is rerendered:
-// therefore the reducer is re-set-up, [httpState] is re-estracted and returned from the reducer and returned
+// therefore the reducer is re-set-up,
+// [httpState] is re-estracted and returned from the reducer and returned.
 const useHttp = () => {
 
   const [httpState, httpDispatch] = useReducer(httpReducer, initialState);
@@ -86,11 +87,7 @@ const useHttp = () => {
   }, [handleError]);
 
   return {
-    loading: httpState.loading,
-    data: httpState.data,
-    error: httpState.error,
-    extra: httpState.extra,
-    identifier: httpState.identifier,
+    ...httpState,
     sendRequest,
     clear
   };
