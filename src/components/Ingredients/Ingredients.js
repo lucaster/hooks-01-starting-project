@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useReducer, useState } from 'react';
+import React, { useCallback, useEffect, useReducer } from 'react';
 import { FIREBASE_DB_URL } from '../../config/secrets';
 import ErrorModal from '../UI/ErrorModal';
 import IngredientForm from './IngredientForm';
@@ -16,15 +16,42 @@ const ingredientReducer = (currIngredients, action) => {
     case 'REMOVE':
       return currIngredients.filter(ing => ing.id !== action.id);
     default:
-      throw new Error('Unknown action type' + JSON.stringify(action));
+      throw new Error('ingredientReducer - Unknown action type' + JSON.stringify(action));
+  }
+};
+
+const httpReducer = (httpState, action) => {
+  switch (action.type) {
+    case 'SEND':
+      return {
+        loading: true,
+        error: null
+      };
+    case 'RESPONSE':
+      return {
+        ...httpState,
+        loading: false
+      };
+    case 'ERROR':
+      return {
+        loading: false,
+        error: action.errorMessage
+      };
+    case 'CLEAR': {
+      return {
+        ...httpState,
+        error: null
+      }
+    }
+    default:
+      throw new Error('httpReducer - Unknown action type' + JSON.stringify(action));
   }
 };
 
 function Ingredients() {
 
   const [ingredients, ingredientsDispatch] = useReducer(ingredientReducer, []);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(false);
+  const [httpState, httpDispatch] = useReducer(httpReducer, { loading: false, error: null });
 
   // reruns when ingregients change:
   useEffect(
@@ -36,13 +63,17 @@ function Ingredients() {
 
   const handleError = err => {
     console.error(err);
-    setError(err.message);
-    setLoading(false);
+    httpDispatch({
+      type: 'ERROR',
+      errorMessage: err.message
+    });
     return Promise.reject(err);
   };
 
   const handleAddIngredient = (ingredient) => {
-    setLoading(true);
+    httpDispatch({
+      type: 'SEND'
+    });
     fetch(FIREBASE_DB_INGREDIENTS_URL, {
       method: 'POST',
       body: JSON.stringify(ingredient),
@@ -51,7 +82,9 @@ function Ingredients() {
       }
     })
       .then(response => {
-        setLoading(false);
+        httpDispatch({
+          type: 'RESPONSE'
+        });
         return response;
       })
       .then(response => response.json())
@@ -69,12 +102,16 @@ function Ingredients() {
   };
 
   const handleRemoveIngredient = id => {
-    setLoading(true);
+    httpDispatch({
+      type: 'SEND'
+    });
     fetch(`${FIREBASE_DB_URL}/ingredients/${id}.jsonz`, {
       method: 'DELETE'
     })
       .then(() => {
-        setLoading(false);
+        httpDispatch({
+          type: 'RESPONSE'
+        });
         ingredientsDispatch({
           type: 'REMOVE',
           id: id
@@ -91,19 +128,21 @@ function Ingredients() {
   }, [ingredientsDispatch]);
 
   const clearError = () => {
-    setError(null);
+    httpDispatch({
+      type: 'CLEAR'
+    });
   }
 
   return (
     <div className="App">
 
-      {error && <ErrorModal
+      {httpState.error && <ErrorModal
         onClose={clearError}
-      >{error}</ErrorModal>}
+      >{httpState.error}</ErrorModal>}
 
       <IngredientForm
         onAddIngredient={handleAddIngredient}
-        loading={loading}
+        loading={httpState.loading}
       />
 
       <section>
