@@ -21,14 +21,14 @@ function Ingredients() {
     [ingredients]
   );
 
-  const errorHandler = err => {
+  const handleError = err => {
     console.error(err);
     setError(err.message);
     setLoading(false);
     return Promise.reject(err);
   };
 
-  const addIngredientHandler = (ingredient) => {
+  const handleAddIngredient = (ingredient) => {
     setLoading(true);
     fetch(FIREBASE_DB_INGREDIENTS_URL, {
       method: 'POST',
@@ -52,10 +52,10 @@ function Ingredients() {
           }
         ]);
       })
-      .catch(errorHandler);
+      .catch(handleError);
   };
 
-  const removeIngredientHandler = id => {
+  const handleRemoveIngredient = id => {
     setLoading(true);
     fetch(`${FIREBASE_DB_URL}/ingredients/${id}.jsonz`, {
       method: 'DELETE'
@@ -64,10 +64,10 @@ function Ingredients() {
         setLoading(false);
         setIngredients(curr => curr.filter(ing => ing.id !== id));
       })
-      .catch(errorHandler);
+      .catch(handleError);
   };
 
-  const ingredientsLoadedHandler = useCallback(ingredients => {
+  const handleIngredientsLoaded = useCallback(ingredients => {
     setIngredients(ingredients);
   }, [setIngredients]);
 
@@ -83,17 +83,17 @@ function Ingredients() {
       >{error}</ErrorModal>}
 
       <IngredientForm
-        onAddIngredient={addIngredientHandler}
+        onAddIngredient={handleAddIngredient}
         loading={loading}
       />
 
       <section>
         <Search
-          onIngredientsLoaded={ingredientsLoadedHandler}
+          onIngredientsLoaded={handleIngredientsLoaded}
         />
         <IngredientList
           ingredients={ingredients}
-          onRemoveItem={removeIngredientHandler}
+          onRemoveItem={handleRemoveIngredient}
         />
       </section>
     </div>
