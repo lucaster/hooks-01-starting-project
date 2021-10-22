@@ -46,6 +46,10 @@ const httpReducer = (httpState, action) => {
 // [httpState] is re-estracted and returned from the reducer and returned.
 const useHttp = () => {
 
+  // The first array element is the latest result calculated by the reducer,
+  // base on the element that was dispatched in the previous cycle..
+  // The second array element is the function that allows you
+  // to append (dispatch) elements to the collection that is being reduced
   const [httpState, httpDispatch] = useReducer(httpReducer, initialState);
 
   const clear = useCallback(() => {
